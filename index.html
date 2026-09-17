@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0B57D0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Keys" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+<title>Key Template</title>
+<style>
+  :root {
+    --accent: #0B57D0;
+    --accent-light: #E8F0FF;
+    --accent-row: #D6E4FF;
+    --dim-row: #FFF0F0;
+    --note-bg: #EEF4FF;
+    --grid: #B8C9F0;
+    --alt-row: #FAFAFA;
+    --hdr: #0B57D0;
+    --text: #111111;
+    --muted: #555555;
+    --border: #333333;
+    --white-key: #FFFDF8;
+    --white-on: #7EB6FF;
+    --black-key: #1a1a1a;
+    --black-on: #3D7EDB;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Helvetica, Arial, system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: #f5f7fb;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 12px 14px 40px;
+    background: #fff;
+    min-height: 100vh;
+    box-shadow: 0 0 0 1px #e6eaf2;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    border: 1px solid var(--grid);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .controls label {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 15px;
+  }
+
+  .controls select {
+    font-size: 16px; /* iOS tap target / no zoom */
+    min-height: 44px;
+    min-width: min(100%, 220px);
+    padding: 8px 12px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    font-family: inherit;
+    font-weight: 600;
+    flex: 1 1 200px;
+  }
+
+  .brand {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(22px, 5vw, 28px);
+    font-weight: 700;
+    margin: 8px 0 2px;
+    letter-spacing: -0.02em;
+  }
+
+  .rel {
+    text-align: center;
+    color: #444;
+    font-size: 13px;
+    margin: 0 0 14px;
+  }
+
+  h2 {
+    color: var(--accent);
+    font-size: clamp(15px, 3.5vw, 17px);
+    margin: 16px 0 8px;
+    font-weight: 700;
+  }
+  h2.center { text-align: center; }
+  h2.left { text-align: left; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin: 0 0 10px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    padding: 6px 10px;
+    border: 1.5px solid var(--accent);
+    border-radius: 6px;
+    background: var(--note-bg);
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .scale-piano {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto 8px;
+    max-width: 480px;
+  }
+  .scale-piano svg { width: 100%; height: auto; display: block; }
+
+  /* Chords table */
+  .table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    border: 1px solid #333;
+  }
+
+  table.chords {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    font-size: 13px;
+  }
+  table.chords th {
+    background: var(--hdr);
+    color: #fff;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 7px 6px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  table.chords th.deg { text-align: center; width: 8%; }
+  table.chords th.chord,
+  table.chords th.notes,
+  table.chords th.variants { width: 18%; }
+  table.chords th.piano { width: 30%; text-align: center; }
+
+  table.chords td {
+    padding: 6px 6px;
+    border-top: 1px solid #cfd8ea;
+    vertical-align: middle;
+  }
+  table.chords td.deg {
+    text-align: center;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  table.chords td.chord { font-weight: 700; }
+  table.chords td.notes { font-weight: 700; white-space: nowrap; }
+  table.chords td.variants {
+    font-size: 11px;
+    line-height: 1.35;
+    color: #222;
+  }
+  table.chords td.piano {
+    text-align: center;
+    padding: 4px 8px;
+  }
+  table.chords td.piano svg {
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+    display: inline-block;
+  }
+
+  tr.tint-ivv { background: var(--accent-row); }
+  tr.tint-dim { background: var(--dim-row); }
+  tr.tint-alt { background: var(--alt-row); }
+
+  .footnote {
+    font-style: italic;
+    font-size: 11px;
+    color: var(--muted);
+    margin: 8px 0 4px;
+    line-height: 1.4;
+  }
+
+  /* Progressions grid */
+  .prog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .genre {
+    border: 1px solid #333;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .genre .g-title {
+    background: var(--accent-row);
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 5px 4px;
+  }
+  .genre table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .genre th {
+    background: var(--hdr);
+    color: #fff;
+    font-size: 10px;
+    padding: 4px 3px;
+    text-align: center;
+  }
+  .genre td {
+    padding: 4px 3px;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    line-height: 1.25;
+  }
+  .genre tr:nth-child(even) td { background: #F7F9FC; }
+  .genre td.roman { font-weight: 700; }
+
+  @media (max-width: 720px) {
+    .prog-grid { grid-template-columns: repeat(2, 1fr); }
+    .wrap { padding: 10px 8px 32px; }
+    table.chords { font-size: 12px; min-width: 560px; }
+  }
+  @media (max-width: 430px) {
+    .prog-grid { grid-template-columns: 1fr; }
+    .brand { display: none; }
+    .chip { min-width: 32px; padding: 5px 8px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="controls">
+    <label for="keySelect">Key</label>
+    <select id="keySelect" aria-label="Select key"></select>
+    <span class="brand">Key Template</span>
+  </div>
+
+  <h1 id="title">Key Template — C Major</h1>
+  <p class="rel" id="relLabel">(A minor)</p>
+
+  <h2 class="center">Notes in the key</h2>
+  <div class="chips" id="chips"></div>
+  <div class="scale-piano" id="scalePiano"></div>
+
+  <h2 class="left">Chords in the key</h2>
+  <div class="table-scroll">
+    <table class="chords" id="chordsTable">
+      <thead>
+        <tr>
+          <th class="deg">Deg</th>
+          <th class="chord">Chord</th>
+          <th class="notes">Notes</th>
+          <th class="variants">Variants</th>
+          <th class="piano">Piano</th>
+        </tr>
+      </thead>
+      <tbody id="chordsBody"></tbody>
+    </table>
+  </div>
+  <p class="footnote" id="footnote"></p>
+
+  <h2 class="left">Common Chord Progressions</h2>
+  <div class="prog-grid" id="progGrid"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const NOTE_PC = {
+    "C": 0, "B#": 0, "Dbb": 0,
+    "C#": 1, "Db": 1, "B##": 1,
+    "D": 2, "C##": 2, "Ebb": 2,
+    "D#": 3, "Eb": 3, "Fbb": 3,
+    "E": 4, "Fb": 4, "D##": 4,
+    "F": 5, "E#": 5, "Gbb": 5,
+    "F#": 6, "Gb": 6, "E##": 6,
+    "G": 7, "F##": 7, "Abb": 7,
+    "G#": 8, "Ab": 8,
+    "A": 9, "G##": 9, "Bbb": 9,
+    "A#": 10, "Bb": 10, "Cbb": 10,
+    "B": 11, "Cb": 11, "A##": 11,
+  };
+
+  const WHITE = ["C", "D", "E", "F", "G", "A", "B"];
+  const BLACK_KEYS = [
+    { sharp: "C#", flat: "Db", after: 0 },
+    { sharp: "D#", flat: "Eb", after: 1 },
+    { sharp: "F#", flat: "Gb", after: 3 },
+    { sharp: "G#", flat: "Ab", after: 4 },
+    { sharp: "A#", flat: "Bb", after: 5 },
+  ];
+  const LETTERS = ["C", "D", "E", "F", "G", "A", "B"];
+  const MAJOR_DEGS = ["I", "ii", "iii", "IV", "V", "vi", "viio"];
+  const MINOR_DEGS = ["i", "iio", "III", "iv", "v", "VI", "VII"];
+
+  const MAJOR_KEYS = [
+    { display: "C Major",  short: "C",  notes: ["C","D","E","F","G","A","B"],     relShort: "Am",  relLabel: "A minor" },
+    { display: "G Major",  short: "G",  notes: ["G","A","B","C","D","E","F#"],    relShort: "Em",  relLabel: "E minor" },
+    { display: "D Major",  short: "D",  notes: ["D","E","F#","G","A","B","C#"],   relShort: "Bm",  relLabel: "B minor" },
+    { display: "A Major",  short: "A",  notes: ["A","B","C#","D","E","F#","G#"],  relShort: "F#m", relLabel: "F# minor" },
+    { display: "E Major",  short: "E",  notes: ["E","F#","G#","A","B","C#","D#"], relShort: "C#m", relLabel: "C# minor" },
+    { display: "B Major",  short: "B",  notes: ["B","C#","D#","E","F#","G#","A#"],relShort: "G#m", relLabel: "G# minor" },
+    { display: "F# Major", short: "F#", notes: ["F#","G#","A#","B","C#","D#","E#"],relShort: "D#m", relLabel: "D# minor" },
+    { display: "F Major",  short: "F",  notes: ["F","G","A","Bb","C","D","E"],    relShort: "Dm",  relLabel: "D minor" },
+    { display: "Bb Major", short: "Bb", notes: ["Bb","C","D","Eb","F","G","A"],   relShort: "Gm",  relLabel: "G minor" },
+    { display: "Eb Major", short: "Eb", notes: ["Eb","F","G","Ab","Bb","C","D"],  relShort: "Cm",  relLabel: "C minor" },
+    { display: "Ab Major", short: "Ab", notes: ["Ab","Bb","C","Db","Eb","F","G"], relShort: "Fm",  relLabel: "F minor" },
+    { display: "Db Major", short: "Db", notes: ["Db","Eb","F","Gb","Ab","Bb","C"],relShort: "Bbm", relLabel: "Bb minor" },
+  ];
+
+  const MINOR_KEYS = [
+    { display: "A Minor",  short: "Am",  notes: ["A","B","C","D","E","F","G"],       relShort: "C",  relLabel: "C major" },
+    { display: "E Minor",  short: "Em",  notes: ["E","F#","G","A","B","C","D"],      relShort: "G",  relLabel: "G major" },
+    { display: "B Minor",  short: "Bm",  notes: ["B","C#","D","E","F#","G","A"],     relShort: "D",  relLabel: "D major" },
+    { display: "F# Minor", short: "F#m", notes: ["F#","G#","A","B","C#","D","E"],    relShort: "A",  relLabel: "A major" },
+    { display: "C# Minor", short: "C#m", notes: ["C#","D#","E","F#","G#","A","B"],   relShort: "E",  relLabel: "E major" },
+    { display: "G# Minor", short: "G#m", notes: ["G#","A#","B","C#","D#","E","F#"],  relShort: "B",  relLabel: "B major" },
+    { display: "D# Minor", short: "D#m", notes: ["D#","E#","F#","G#","A#","B","C#"], relShort: "F#", relLabel: "F# major" },
+    { display: "D Minor",  short: "Dm",  notes: ["D","E","F","G","A","Bb","C"],      relShort: "F",  relLabel: "F major" },
+    { display: "G Minor",  short: "Gm",  notes: ["G","A","Bb","C","D","Eb","F"],     relShort: "Bb", relLabel: "Bb major" },
+    { display: "C Minor",  short: "Cm",  notes: ["C","D","Eb","F","G","Ab","Bb"],    relShort: "Eb", relLabel: "Eb major" },
+    { display: "F Minor",  short: "Fm",  notes: ["F","G","Ab","Bb","C","Db","Eb"],   relShort: "Ab", relLabel: "Ab major" },
+    { display: "Bb Minor", short: "Bbm", notes: ["Bb","C","Db","Eb","F","Gb","Ab"],  relShort: "Db", relLabel: "Db major" },
+  ];
+
+  const GENRE_TEMPLATES = [
+    ["Rock",  [["I–IV–V","anthem / drive"],["I–V–IV","stadium lift"],["I–bVII–IV","mixolydian push"]]],
+    ["Pop",   [["I–V–vi–IV","axis loop"],["vi–IV–I–V","emotional lift"],["I–ii–IV–V","singalong"]]],
+    ["Blues", [["I–IV–I–V","quick change"],["I–I–I–I","12-bar head"],["I7–IV7–V7","dominant shuffle"]]],
+    ["Jazz",  [["ii–V–I","turnaround"],["I–vi–ii–V","standard cycle"],["iii–vi–ii–V","ladder into I"]]],
+    ["EDM",   [["vi–IV–I–V","festival loop"],["I–V–vi–IV","build / drop"],["i–VI–III–VII","minor festival"]]],
+    ["Minor", [["i–VI–VII","andante / epic"],["i–iv–V","dramatic cadence"],["i–VI–III–VII","cinematic loop"]]],
+  ];
+
+  function preferFlat(notes) {
+    return notes.some(n => n.endsWith("b")) && !notes.some(n => n.endsWith("#"));
+  }
+
+  function pcName(pc, preferNotes, useFlat) {
+    pc = ((pc % 12) + 12) % 12;
+    for (const n of preferNotes) {
+      if (NOTE_PC[n] === pc) return n;
+    }
+    const flats = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+    const sharps = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+    return useFlat ? flats[pc] : sharps[pc];
+  }
+
+  function spellInterval(root, semitones, letterSteps) {
+    const idx = LETTERS.indexOf(root[0]);
+    const newLetter = LETTERS[(idx + letterSteps) % 7];
+    const target = (NOTE_PC[root] + semitones) % 12;
+    for (const acc of ["", "#", "b", "##", "bb"]) {
+      const cand = newLetter + acc;
+      if (NOTE_PC[cand] === target) return cand;
+    }
+    return pcName(target, [], false);
+  }
+
+  function chordShort(root, quality) {
+    if (quality === "maj") return root;
+    if (quality === "min") return root + "m";
+    if (quality === "dim") return root + "dim";
+    if (quality === "7") return root + "7";
+    return root + quality;
+  }
+
+  function chordLong(root, quality) {
+    if (quality === "maj") return root + " Major";
+    if (quality === "min") return root + " minor";
+    if (quality === "dim") return root + " diminished";
+    return root + " " + quality;
+  }
+
+  function triadNotes(notes, i) {
+    return [notes[i], notes[(i + 2) % 7], notes[(i + 4) % 7]];
+  }
+
+  function buildMajorChords(notes) {
+    const quals = ["maj","min","min","maj","maj","min","dim"];
+    return MAJOR_DEGS.map((deg, i) => {
+      const triad = triadNotes(notes, i);
+      const root = notes[i];
+      let variants;
+      if (deg === "I") {
+        variants = [`7th = ${notes[6]}`, `9th = ${notes[1]}`, `6th = ${notes[5]}`];
+      } else if (deg === "ii") {
+        variants = [`7th = ${notes[0]}`, `9th = ${notes[2]}`, `11th = ${notes[4]}`, `sus2 = ${notes[2]}`];
+      } else if (deg === "iii") {
+        const n9 = spellInterval(root, 2, 1);
+        variants = [`7th = ${notes[1]}`, `9th = ${n9}`, `sus2 = ${n9}`];
+      } else if (deg === "IV") {
+        variants = [`7th = ${notes[2]}`, `9th = ${notes[4]}`, `6th = ${notes[1]}`];
+      } else if (deg === "V") {
+        const vPc = NOTE_PC[root];
+        const b9 = pcName(vPc + 1, notes, true);
+        const s9 = pcName(vPc + 3, notes, true);
+        variants = [
+          `7th = ${notes[3]}`, `9th = ${notes[5]}`, `13th = ${notes[2]}`,
+          `7b9 = ${b9}`, `7#9 = ${s9}`, `sus4 = ${notes[0]}`
+        ];
+      } else if (deg === "vi") {
+        variants = [`7th = ${notes[4]}`, `9th = ${notes[6]}`, `11th = ${notes[1]}`, `sus2 = ${notes[6]}`];
+      } else {
+        const o7 = spellInterval(root, 9, 6);
+        variants = [`m7b5 = ${notes[5]}`, `o7 = ${o7}`];
+      }
+      return { deg, name: chordLong(root, quals[i]), notes: triad, variants };
+    });
+  }
+
+  function buildMinorChords(notes) {
+    const quals = ["min","dim","maj","min","min","maj","maj"];
+    return MINOR_DEGS.map((deg, i) => {
+      const triad = triadNotes(notes, i);
+      const root = notes[i];
+      let variants;
+      if (deg === "i") {
+        variants = [`7th = ${notes[6]}`, `9th = ${notes[1]}`, `11th = ${notes[3]}`, `sus2 = ${notes[1]}`];
+      } else if (deg === "iio") {
+        const o7 = spellInterval(root, 9, 6);
+        const m7 = notes[(i + 6) % 7];
+        variants = [`m7b5 = ${m7}`, `o7 = ${o7}`];
+      } else if (deg === "III") {
+        variants = [`7th = ${notes[1]}`, `9th = ${notes[3]}`, `6th = ${notes[0]}`];
+      } else if (deg === "iv") {
+        variants = [`7th = ${notes[2]}`, `9th = ${notes[4]}`, `11th = ${notes[6]}`, `sus2 = ${notes[4]}`];
+      } else if (deg === "v") {
+        const n9 = spellInterval(root, 2, 1);
+        variants = [`7th = ${notes[3]}`, `9th = ${n9}`, `sus4 = ${notes[0]}`, `sus2 = ${n9}`];
+      } else if (deg === "VI") {
+        variants = [`7th = ${notes[4]}`, `9th = ${notes[6]}`, `6th = ${notes[2]}`];
+      } else {
+        variants = [`7th = ${notes[5]}`, `9th = ${notes[0]}`, `13th = ${notes[2]}`, `sus4 = ${notes[1]}`];
+      }
+      return { deg, name: chordLong(root, quals[i]), notes: triad, variants };
+    });
+  }
+
+  function relativeFootnote(mode, notes, relLabel) {
+    if (mode === "major") {
+      const mapping = [
+        [chordShort(notes[5], "min"), "i"],
+        [chordShort(notes[6], "dim"), "iio"],
+        [chordShort(notes[0], "maj"), "III"],
+        [chordShort(notes[1], "min"), "iv"],
+        [chordShort(notes[2], "min"), "v"],
+        [chordShort(notes[3], "maj"), "VI"],
+        [chordShort(notes[4], "maj"), "VII"],
+      ];
+      return `Relative ${relLabel} uses the same chords: ${mapping.map(([c,d]) => `${c} = ${d}`).join(", ")}.`;
+    }
+    const mapping = [
+      [chordShort(notes[2], "maj"), "I"],
+      [chordShort(notes[3], "min"), "ii"],
+      [chordShort(notes[4], "min"), "iii"],
+      [chordShort(notes[5], "maj"), "IV"],
+      [chordShort(notes[6], "maj"), "V"],
+      [chordShort(notes[0], "min"), "vi"],
+      [chordShort(notes[1], "dim"), "viio"],
+    ];
+    return `Relative ${relLabel} uses the same chords: ${mapping.map(([c,d]) => `${c} = ${d}`).join(", ")}.`;
+  }
+
+  function degreeTokenToChord(token, mode, notes, relNotes, opts) {
+    opts = opts || {};
+    let tok = token.trim();
+    const add7 = tok.endsWith("7");
+    let core = add7 ? tok.slice(0, -1) : tok;
+
+    let useMinorScale = false;
+    let scale = notes;
+    let degList = MAJOR_DEGS;
+
+    if (mode === "major") {
+      if (["i","iio","III","iv","v","VI","VII"].includes(core)) {
+        useMinorScale = true;
+        scale = relNotes;
+        degList = MINOR_DEGS;
+      } else {
+        scale = notes;
+        degList = MAJOR_DEGS;
+      }
+    } else {
+      scale = notes;
+      degList = MINOR_DEGS;
+      const majorToMinor = {
+        "I": "i", "ii": "iio", "iii": "III", "IV": "iv", "V": "v",
+        "vi": "VI", "viio": "VII", "bVII": "VII",
+      };
+      if (majorToMinor[core] && !degList.includes(core)) {
+        if (core !== "V") core = majorToMinor[core];
+      }
+    }
+
+    // bVII is always the mixolydian flat-7 major chord — prefer flat spelling (Bb not A#)
+    if (core === "bVII") {
+      const tonicPc = NOTE_PC[notes[0]];
+      const rootPc = (tonicPc + 10) % 12;
+      const root = pcName(rootPc, notes, true);
+      const name = chordShort(root, "maj");
+      return add7 ? name + "7" : name;
+    }
+
+    // Harmonic-minor major dominant (V / V7)
+    // - on minor pages: always
+    // - on major pages inside a minor-context progression (e.g. i–iv–V): relative minor's V
+    if (core === "V" && (mode === "minor" || (mode === "major" && opts.minorContext))) {
+      const scale = (mode === "major" && opts.minorContext) ? relNotes : notes;
+      const root = scale[4];
+      return add7 ? chordShort(root, "7") : chordShort(root, "maj");
+    }
+
+    let idx, quals;
+    if (useMinorScale || mode === "minor") {
+      quals = ["min","dim","maj","min","min","maj","maj"];
+      if (MINOR_DEGS.includes(core)) idx = MINOR_DEGS.indexOf(core);
+      else if (MAJOR_DEGS.includes(core)) idx = MAJOR_DEGS.indexOf(core);
+      else return tok;
+      const root = scale[idx];
+      const q = quals[idx];
+      if (add7) {
+        if (q === "maj") return chordShort(root, "7");
+        if (q === "min") return root + "m7";
+        if (q === "dim") return root + "m7b5";
+      }
+      return chordShort(root, q);
+    }
+
+    if (!MAJOR_DEGS.includes(core)) return tok;
+    idx = MAJOR_DEGS.indexOf(core);
+    quals = ["maj","min","min","maj","maj","min","dim"];
+    const root = scale[idx];
+    const q = quals[idx];
+    if (add7) {
+      if (q === "maj") return chordShort(root, "7");
+      if (q === "min") return root + "m7";
+      if (q === "dim") return root + "m7b5";
+    }
+    return chordShort(root, q);
+  }
+
+  function expandProgression(roman, mode, notes, relNotes) {
+    const parts = roman.split("–");
+    const minorContext = parts.some(p => {
+      const core = p.trim().endsWith("7") ? p.trim().slice(0, -1) : p.trim();
+      return ["i", "iio", "III", "iv", "v", "VI", "VII"].includes(core);
+    });
+    return parts.map(p => degreeTokenToChord(p, mode, notes, relNotes, { minorContext })).join("–");
+  }
+
+  function labelForPc(pc, noteNames) {
+    for (const n of noteNames) {
+      if (NOTE_PC[n] === pc) return n;
+    }
+    return ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"][pc];
+  }
+
+  /** Draw 1-octave C–B piano as SVG. highlightNotes: array of note name strings. */
+  function drawPianoSVG(highlightNotes, opts) {
+    opts = opts || {};
+    const W = opts.width || 280;
+    const H = opts.height || 90;
+    const compact = !!opts.compact;
+    const pcs = new Set((highlightNotes || []).map(n => NOTE_PC[n]));
+    const keyW = W / 7;
+    const blackW = keyW * 0.58;
+    const blackH = H * 0.58;
+    const fontSize = compact ? Math.max(8, keyW * 0.28) : Math.max(10, keyW * 0.32);
+    const fontB = compact ? Math.max(6, keyW * 0.18) : Math.max(8, keyW * 0.22);
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Piano highlighting ${highlightNotes.join(', ')}">`;
+
+    WHITE.forEach((name, i) => {
+      const x0 = i * keyW;
+      const on = pcs.has(NOTE_PC[name]);
+      const fill = on ? "#7EB6FF" : "#FFFDF8";
+      const stroke = on ? "#0B57D0" : "#222222";
+      const sw = on ? 2.5 : 1.5;
+      svg += `<rect x="${x0}" y="0" width="${keyW - 1.5}" height="${H - 1}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+      svg += `<text x="${x0 + (keyW - 1.5) / 2}" y="${H - 8}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="${fontSize}" font-weight="700" fill="#111">${name}</text>`;
+    });
+
+    BLACK_KEYS.forEach(({ sharp, flat, after }) => {
+      const x0 = (after + 1) * keyW - blackW / 2;
+      const pc = NOTE_PC[sharp];
+      const on = pcs.has(pc);
+      const fill = on ? "#3D7EDB" : "#1a1a1a";
+      const stroke = on ? "#0B57D0" : "#111111";
+      svg += `<rect x="${x0}" y="0" width="${blackW}" height="${blackH}" fill="${fill}" stroke="${stroke}" stroke-width="${on ? 2 : 1.2}"/>`;
+      if (on) {
+        const lab = labelForPc(pc, highlightNotes);
+        svg += `<text x="${x0 + blackW / 2}" y="${blackH - 6}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="${fontB}" font-weight="700" fill="#fff">${lab}</text>`;
+      } else if (!compact) {
+        // dual label like PDF black keys when not highlighted (optional subtle)
+        // skip unhighlighted labels to reduce clutter on small pianos
+      }
+    });
+
+    svg += "</svg>";
+    return svg;
+  }
+
+  function findRelNotes(mode, relShort) {
+    if (mode === "major") {
+      const m = MINOR_KEYS.find(k => k.short === relShort);
+      return m ? m.notes : null;
+    }
+    const M = MAJOR_KEYS.find(k => k.short === relShort);
+    return M ? M.notes : null;
+  }
+
+  function buildKeyData(meta, mode) {
+    const notes = meta.notes;
+    const chords = mode === "major" ? buildMajorChords(notes) : buildMinorChords(notes);
+    const relNotes = findRelNotes(mode, meta.relShort);
+    const footnote = relativeFootnote(mode, notes, meta.relLabel);
+    const progressions = GENRE_TEMPLATES.map(([genre, rows]) => ({
+      genre,
+      rows: rows.map(([roman, feel]) => ({
+        roman,
+        notes: expandProgression(roman, mode, notes, relNotes),
+        feel,
+      })),
+    }));
+    return {
+      id: meta.short + (mode === "major" ? "" : ""),
+      display: meta.display,
+      mode,
+      notes,
+      relLabel: meta.relLabel,
+      relParen: mode === "major" ? `(${meta.relLabel})` : `(${meta.relLabel})`,
+      chords,
+      footnote,
+      progressions,
+    };
+  }
+
+  // Build all 24 keys in dropdown order
+  const ALL_KEYS = [];
+  MAJOR_KEYS.forEach(k => ALL_KEYS.push(buildKeyData(k, "major")));
+  MINOR_KEYS.forEach(k => ALL_KEYS.push(buildKeyData(k, "minor")));
+
+  // --- Render ---
+  const sel = document.getElementById("keySelect");
+  const ogMajor = document.createElement("optgroup");
+  ogMajor.label = "Major";
+  const ogMinor = document.createElement("optgroup");
+  ogMinor.label = "Minor";
+
+  ALL_KEYS.forEach((k, i) => {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = k.display;
+    if (k.mode === "major") ogMajor.appendChild(opt);
+    else ogMinor.appendChild(opt);
+  });
+  sel.appendChild(ogMajor);
+  sel.appendChild(ogMinor);
+
+  function tintClass(deg) {
+    if (["I","IV","V","i","iv","v"].includes(deg)) return "tint-ivv";
+    if (["viio","iio"].includes(deg)) return "tint-dim";
+    return "";
+  }
+
+  function render(idx) {
+    const key = ALL_KEYS[idx];
+    document.getElementById("title").textContent = `Key Template — ${key.display}`;
+    document.getElementById("relLabel").textContent = key.relParen;
+    document.title = `Key Template — ${key.display}`;
+
+    const chips = document.getElementById("chips");
+    chips.innerHTML = key.notes.map(n => `<span class="chip">${n}</span>`).join("");
+
+    document.getElementById("scalePiano").innerHTML = drawPianoSVG(key.notes, {
+      width: 420, height: 110, compact: false
+    });
+
+    const body = document.getElementById("chordsBody");
+    body.innerHTML = key.chords.map(c => {
+      const notesStr = c.notes.join(" – ");
+      const varHtml = c.variants.join("<br/>");
+      const piano = drawPianoSVG(c.notes, { width: 200, height: 70, compact: true });
+      return `<tr class="${tintClass(c.deg)}">
+        <td class="deg">${c.deg}</td>
+        <td class="chord">${c.name}</td>
+        <td class="notes">${notesStr}</td>
+        <td class="variants">${varHtml}</td>
+        <td class="piano">${piano}</td>
+      </tr>`;
+    }).join("");
+
+    document.getElementById("footnote").textContent = key.footnote;
+
+    const grid = document.getElementById("progGrid");
+    grid.innerHTML = key.progressions.map(g => {
+      const rows = g.rows.map(r =>
+        `<tr><td class="roman">${r.roman}</td><td>${r.notes}</td><td>${r.feel}</td></tr>`
+      ).join("");
+      return `<div class="genre">
+        <div class="g-title">${g.genre}</div>
+        <table>
+          <thead><tr><th>Roman</th><th>Notes</th><th>Feel</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    }).join("");
+  }
+
+  sel.addEventListener("change", () => render(Number(sel.value)));
+  // Default: C Major (index 0)
+  sel.value = "0";
+  render(0);
+})();
+</script>
+<script>
+  // Register service worker only on http(s); skip file:// to avoid noisy errors
+  if ("serviceWorker" in navigator) {
+    const isHttp = location.protocol === "http:" || location.protocol === "https:";
+    if (isHttp) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  }
+</script>
+</body>
+</html>
