@@ -256,14 +256,19 @@
   .genre table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
     font-size: 11px;
   }
+  .genre col.roman,
+  .genre col.notes,
+  .genre col.feel { width: 33.333%; }
   .genre th {
     background: var(--hdr);
     color: #fff;
     font-size: 10px;
     padding: 4px 3px;
     text-align: center;
+    width: 33.333%;
   }
   .genre td {
     padding: 4px 3px;
@@ -777,6 +782,11 @@
       return `<div class="genre">
         <div class="g-title">${g.genre}</div>
         <table>
+          <colgroup>
+            <col class="roman" />
+            <col class="notes" />
+            <col class="feel" />
+          </colgroup>
           <thead><tr><th>Roman</th><th>Notes</th><th>Feel</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
