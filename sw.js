@@ -1,5 +1,5 @@
 /* Key Template — simple cache-first service worker for static assets */
-const CACHE = "key-template-v1";
+const CACHE = "key-template-v2";
 const ASSETS = [
   "./",
   "./index.html",
