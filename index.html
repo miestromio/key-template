@@ -216,8 +216,8 @@
     padding: 2px 2px;
   }
   table.chords td.piano svg {
-    width: 100%;
-    max-width: 100%;
+    width: 60%;
+    max-width: 60%;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -760,7 +760,7 @@
     body.innerHTML = key.chords.map(c => {
       const notesStr = c.notes.join("–");
       const varHtml = c.variants.join("<br/>");
-      const piano = drawPianoSVG(c.notes, { width: 200, height: 70, compact: true });
+      const piano = drawPianoSVG(c.notes, { width: 120, height: 42, compact: true });
       return `<tr class="${tintClass(c.deg)}">
         <td class="deg">${c.deg}</td>
         <td class="chord">${c.name}</td>
