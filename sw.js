@@ -1,5 +1,5 @@
 /* Key Template — network-first so home-screen app matches live site */
-const CACHE = "key-template-v14";
+const CACHE = "key-template-v15";
 const ASSETS = [
   "./",
   "./index.html",
