@@ -362,6 +362,17 @@
     "B": 11, "Cb": 11, "A##": 11, "Ax": 11,
   };
 
+  /** Prefer common piano spellings — no E# / B# / Cb / Fb in the UI. */
+  function practicalSpell(n) {
+    const map = {
+      "E#": "F", "B#": "C", "Fb": "E", "Cb": "B",
+      "E##": "F#", "Ex": "F#", "B##": "C#", "Bx": "C#",
+      "Fbb": "Eb", "Cbb": "Bb",
+      "Fx": "G", "Cx": "D", "Dx": "E", "Gx": "A", "Ax": "B",
+    };
+    return map[n] || n;
+  }
+
   const WHITE = ["C", "D", "E", "F", "G", "A", "B"];
   const BLACK_KEYS = [
     { sharp: "C#", flat: "Db", after: 0 },
@@ -381,7 +392,7 @@
     { display: "A Major",  short: "A",  notes: ["A","B","C#","D","E","F#","G#"],  relShort: "F#m", relLabel: "F# minor" },
     { display: "E Major",  short: "E",  notes: ["E","F#","G#","A","B","C#","D#"], relShort: "C#m", relLabel: "C# minor" },
     { display: "B Major",  short: "B",  notes: ["B","C#","D#","E","F#","G#","A#"],relShort: "G#m", relLabel: "G# minor" },
-    { display: "F# Major", short: "F#", notes: ["F#","G#","A#","B","C#","D#","E#"],relShort: "D#m", relLabel: "D# minor" },
+    { display: "F# Major", short: "F#", notes: ["F#","G#","A#","B","C#","D#","F"],relShort: "D#m", relLabel: "D# minor" },
     { display: "F Major",  short: "F",  notes: ["F","G","A","Bb","C","D","E"],    relShort: "Dm",  relLabel: "D minor" },
     { display: "Bb Major", short: "Bb", notes: ["Bb","C","D","Eb","F","G","A"],   relShort: "Gm",  relLabel: "G minor" },
     { display: "Eb Major", short: "Eb", notes: ["Eb","F","G","Ab","Bb","C","D"],  relShort: "Cm",  relLabel: "C minor" },
@@ -396,7 +407,7 @@
     { display: "F# Minor", short: "F#m", notes: ["F#","G#","A","B","C#","D","E"],    relShort: "A",  relLabel: "A major" },
     { display: "C# Minor", short: "C#m", notes: ["C#","D#","E","F#","G#","A","B"],   relShort: "E",  relLabel: "E major" },
     { display: "G# Minor", short: "G#m", notes: ["G#","A#","B","C#","D#","E","F#"],  relShort: "B",  relLabel: "B major" },
-    { display: "D# Minor", short: "D#m", notes: ["D#","E#","F#","G#","A#","B","C#"], relShort: "F#", relLabel: "F# major" },
+    { display: "D# Minor", short: "D#m", notes: ["D#","F","F#","G#","A#","B","C#"], relShort: "F#", relLabel: "F# major" },
     { display: "D Minor",  short: "Dm",  notes: ["D","E","F","G","A","Bb","C"],      relShort: "F",  relLabel: "F major" },
     { display: "G Minor",  short: "Gm",  notes: ["G","A","Bb","C","D","Eb","F"],     relShort: "Bb", relLabel: "Bb major" },
     { display: "C Minor",  short: "Cm",  notes: ["C","D","Eb","F","G","Ab","Bb"],    relShort: "Eb", relLabel: "Eb major" },
@@ -433,9 +444,9 @@
     const target = (NOTE_PC[root] + semitones) % 12;
     for (const acc of ["", "#", "b", "##", "bb"]) {
       const cand = newLetter + acc;
-      if (NOTE_PC[cand] === target) return cand;
+      if (NOTE_PC[cand] === target) return practicalSpell(cand);
     }
-    return pcName(target, [], false);
+    return practicalSpell(pcName(target, [], false));
   }
 
   function chordShort(root, quality) {
@@ -665,10 +676,9 @@
       const fill = on ? "#7EB6FF" : "#FFFDF8";
       const stroke = on ? "#0B57D0" : "#222222";
       const sw = on ? 2.5 : 1.5;
-      // When lit, prefer the scale spelling (E# on F, Cb on B) so enharmonics are obvious
-      const lab = on ? labelForPc(NOTE_PC[name], highlightNotes) : name;
+      // Always use the physical key name (F not E#) — matches a real keyboard
       svg += `<rect x="${x0}" y="0" width="${keyW - 1.5}" height="${H - 1}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
-      svg += `<text x="${x0 + (keyW - 1.5) / 2}" y="${H - 8}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="${fontSize}" font-weight="700" fill="#111">${lab}</text>`;
+      svg += `<text x="${x0 + (keyW - 1.5) / 2}" y="${H - 8}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="${fontSize}" font-weight="700" fill="#111">${name}</text>`;
     });
 
     BLACK_KEYS.forEach(({ sharp, flat, after }) => {
@@ -679,7 +689,7 @@
       const stroke = on ? "#0B57D0" : "#111111";
       svg += `<rect x="${x0}" y="0" width="${blackW}" height="${blackH}" fill="${fill}" stroke="${stroke}" stroke-width="${on ? 2 : 1.2}"/>`;
       if (on) {
-        const lab = labelForPc(pc, highlightNotes);
+        const lab = practicalSpell(labelForPc(pc, highlightNotes));
         svg += `<text x="${x0 + blackW / 2}" y="${blackH - 6}" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="${fontB}" font-weight="700" fill="#fff">${lab}</text>`;
       } else if (!compact) {
         // dual label like PDF black keys when not highlighted (optional subtle)
@@ -701,7 +711,7 @@
   }
 
   function buildKeyData(meta, mode) {
-    const notes = meta.notes;
+    const notes = meta.notes.map(practicalSpell);
     const chords = mode === "major" ? buildMajorChords(notes) : buildMinorChords(notes);
     const relNotes = findRelNotes(mode, meta.relShort);
     const footnote = relativeFootnote(mode, notes, meta.relLabel);
