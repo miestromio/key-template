@@ -147,7 +147,7 @@
   }
   .scale-piano svg { width: 100%; max-width: 100%; height: auto; display: block; }
 
-  /* Chords table — hug content for Deg/Chord/Notes/Piano; Variants fills leftover */
+  /* Chords table — fixed rem cols sized for phone; Variants fills rest */
   .table-scroll {
     width: 100%;
     max-width: 100%;
@@ -160,7 +160,7 @@
     width: 100%;
     max-width: 100%;
     border-collapse: collapse;
-    table-layout: auto;
+    table-layout: fixed;
     font-size: 12px;
   }
   table.chords th {
@@ -168,69 +168,54 @@
     color: #fff;
     font-weight: 700;
     font-size: 10px;
-    padding: 6px 6px;
+    padding: 6px 5px;
     text-align: left;
     white-space: nowrap;
   }
-  table.chords th.deg,
-  table.chords td.deg {
-    text-align: center;
-    width: 1%;
-    white-space: nowrap;
-    padding-left: 6px;
-    padding-right: 6px;
-  }
-  table.chords th.chord,
-  table.chords td.chord,
-  table.chords th.notes,
-  table.chords td.notes,
-  table.chords th.piano,
-  table.chords td.piano {
-    width: 1%;
-    white-space: nowrap;
-  }
-  table.chords th.variants,
-  table.chords td.variants {
-    width: auto;
-  }
-  table.chords th.piano { text-align: center; }
+  table.chords th.deg { text-align: center; width: 2.1rem; }
+  table.chords th.chord { width: 5rem; }
+  table.chords th.notes { width: 5.4rem; }
+  table.chords th.piano { width: 6.2rem; text-align: center; }
+  /* Variants: no width — takes remaining space */
 
   table.chords td {
-    padding: 5px 6px;
+    padding: 5px 5px;
     border-top: 1px solid #cfd8ea;
     vertical-align: middle;
   }
   table.chords td.deg {
+    text-align: center;
     font-weight: 700;
     color: var(--accent);
     font-size: 13px;
+    white-space: nowrap;
   }
   table.chords td.chord {
     font-weight: 700;
     font-size: 12px;
-    line-height: 1.2;
-    padding-right: 10px;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
   }
   table.chords td.notes {
     font-weight: 700;
     font-size: 12px;
-    line-height: 1.2;
-    padding-right: 10px;
+    line-height: 1.15;
+    white-space: nowrap;
   }
   table.chords td.variants {
     font-size: 10px;
     line-height: 1.25;
     color: #222;
     word-break: break-word;
-    overflow-wrap: anywhere;
   }
   table.chords td.piano {
     text-align: center;
-    padding: 4px 6px;
+    padding: 3px 4px;
   }
   table.chords td.piano svg {
-    width: 112px;
-    max-width: 30vw;
+    width: 92px;
     height: auto;
     display: block;
     margin: 0 auto;
@@ -293,21 +278,24 @@
   @media (max-width: 720px) {
     .prog-grid { grid-template-columns: repeat(2, 1fr); }
     .wrap { padding: 10px 8px 32px; }
-    table.chords th { font-size: 10px; padding: 5px 5px; }
-    table.chords td { padding: 4px 5px; }
+    table.chords th { font-size: 10px; padding: 5px 4px; }
+    table.chords td { padding: 4px 4px; }
     table.chords td.chord,
-    table.chords td.notes { font-size: 11px; }
+    table.chords td.notes { font-size: 11px; white-space: nowrap; }
     table.chords td.variants { font-size: 9px; line-height: 1.2; }
-    table.chords td.piano svg { width: 100px; max-width: 28vw; }
+    table.chords td.piano svg { width: 88px; }
   }
   @media (max-width: 430px) {
     .prog-grid { grid-template-columns: 1fr; }
     .brand { display: none; }
     .chip { min-width: 28px; padding: 5px 6px; font-size: 12px; }
     .chips { gap: 4px; }
+    table.chords th.chord { width: 4.8rem; }
+    table.chords th.notes { width: 5.2rem; }
+    table.chords th.piano { width: 5.9rem; }
     table.chords td.chord,
-    table.chords td.notes { font-size: 11px; }
-    table.chords td.piano svg { width: 96px; max-width: 26vw; }
+    table.chords td.notes { font-size: 11px; white-space: nowrap; }
+    table.chords td.piano svg { width: 84px; }
   }
 </style>
 </head>
@@ -453,7 +441,7 @@
   function chordLong(root, quality) {
     if (quality === "maj") return root + " Major";
     if (quality === "min") return root + " minor";
-    if (quality === "dim") return root + " diminished";
+    if (quality === "dim") return root + " dim";
     return root + " " + quality;
   }
 
@@ -766,7 +754,7 @@
     body.innerHTML = key.chords.map(c => {
       const notesStr = c.notes.join(" – ");
       const varHtml = c.variants.join("<br/>");
-      const piano = drawPianoSVG(c.notes, { width: 140, height: 48, compact: true });
+      const piano = drawPianoSVG(c.notes, { width: 130, height: 46, compact: true });
       return `<tr class="${tintClass(c.deg)}">
         <td class="deg">${c.deg}</td>
         <td class="chord">${c.name}</td>
