@@ -764,7 +764,44 @@
     return "";
   }
 
-  function render(idx) {
+  function normalizeKeyQuery(raw) {
+    return decodeURIComponent(String(raw || ""))
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .replace(/♯/g, "#")
+      .replace(/♭/g, "b")
+      .replace(/major$/i, "")
+      .replace(/minor$/i, "m")
+      .replace(/maj$/i, "")
+      .replace(/min$/i, "m");
+  }
+
+  function findKeyIndexFromQuery() {
+    const params = new URLSearchParams(location.search);
+    const raw = params.get("key") || params.get("k");
+    if (!raw) return 0;
+    const q = normalizeKeyQuery(raw);
+    // Exact short id (c, f#, am, bbm, ...)
+    let idx = ALL_KEYS.findIndex(k => normalizeKeyQuery(k.id) === q);
+    if (idx >= 0) return idx;
+    // Display name without spaces (f#major, a minor → am handled above)
+    idx = ALL_KEYS.findIndex(k => normalizeKeyQuery(k.display) === q || normalizeKeyQuery(k.display) === q + "major" || normalizeKeyQuery(k.display) === q);
+    if (idx >= 0) return idx;
+    // Bare letter major: "f#" already matches id; "bb" → Bb Major not Bbm
+    idx = ALL_KEYS.findIndex(k => k.mode === "major" && normalizeKeyQuery(k.id) === q);
+    return idx >= 0 ? idx : 0;
+  }
+
+  function setKeyInUrl(shortId) {
+    const url = new URL(location.href);
+    url.searchParams.set("key", shortId);
+    history.replaceState(null, "", url);
+  }
+
+  function render(idx, opts) {
+    opts = opts || {};
+    const updateUrl = opts.updateUrl !== false;
     const key = ALL_KEYS[idx];
     document.getElementById("title").textContent = `Key Template — ${key.display}`;
     document.getElementById("relLabel").textContent = key.relParen;
@@ -814,9 +851,17 @@
   }
 
   sel.addEventListener("change", () => render(Number(sel.value)));
-  // Default: C Major (index 0)
-  sel.value = "0";
-  render(0);
+
+  window.addEventListener("popstate", () => {
+    const i = findKeyIndexFromQuery();
+    sel.value = String(i);
+    render(i, { updateUrl: false });
+  });
+
+  // Restore from ?key=F%23 (etc.); default C Major
+  const startIdx = findKeyIndexFromQuery();
+  sel.value = String(startIdx);
+  render(startIdx);
 })();
 </script>
 <script>
