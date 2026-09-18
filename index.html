@@ -173,11 +173,11 @@
     text-align: left;
     white-space: nowrap;
   }
-  table.chords th.deg { text-align: center; width: 7%; }
-  table.chords th.chord { width: 14%; }
-  table.chords th.notes { width: 15%; }
-  table.chords th.variants { width: 13%; }
-  table.chords th.piano { width: 51%; text-align: center; }
+  table.chords th.deg { text-align: center; width: 6%; }
+  table.chords th.chord { width: 22%; }
+  table.chords th.notes { width: 18%; }
+  table.chords th.variants { width: 14%; }
+  table.chords th.piano { width: 40%; text-align: center; }
 
   table.chords td {
     padding: 4px 3px;
@@ -192,17 +192,15 @@
   }
   table.chords td.chord {
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1.2;
-    word-break: break-word;
-    hyphens: auto;
+    white-space: nowrap;
   }
   table.chords td.notes {
     font-weight: 700;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 1.2;
-    white-space: normal;
-    word-break: break-word;
+    white-space: nowrap;
   }
   table.chords td.variants {
     font-size: 9px;
@@ -283,24 +281,24 @@
     table.chords th { font-size: 9px; padding: 5px 2px; }
     table.chords td { padding: 3px 2px; }
     table.chords td.chord,
-    table.chords td.notes { font-size: 9px; }
+    table.chords td.notes { font-size: 10px; white-space: nowrap; }
     table.chords td.variants { font-size: 8px; line-height: 1.2; }
-    table.chords th.deg { width: 7%; }
-    table.chords th.chord { width: 13%; }
-    table.chords th.notes { width: 14%; }
-    table.chords th.variants { width: 12%; }
-    table.chords th.piano { width: 54%; }
+    table.chords th.deg { width: 6%; }
+    table.chords th.chord { width: 22%; }
+    table.chords th.notes { width: 18%; }
+    table.chords th.variants { width: 14%; }
+    table.chords th.piano { width: 40%; }
   }
   @media (max-width: 430px) {
     .prog-grid { grid-template-columns: 1fr; }
     .brand { display: none; }
     .chip { min-width: 28px; padding: 5px 6px; font-size: 12px; }
     .chips { gap: 4px; }
-    table.chords th.deg { width: 7%; }
-    table.chords th.chord { width: 13%; }
-    table.chords th.notes { width: 14%; }
-    table.chords th.variants { width: 11%; }
-    table.chords th.piano { width: 55%; }
+    table.chords th.deg { width: 6%; }
+    table.chords th.chord { width: 23%; }
+    table.chords th.notes { width: 18%; }
+    table.chords th.variants { width: 13%; }
+    table.chords th.piano { width: 40%; }
     table.chords td.deg { font-size: 11px; }
   }
 </style>
@@ -758,7 +756,7 @@
 
     const body = document.getElementById("chordsBody");
     body.innerHTML = key.chords.map(c => {
-      const notesStr = c.notes.join("–");
+      const notesStr = c.notes.join(" – ");
       const varHtml = c.variants.join("<br/>");
       const piano = drawPianoSVG(c.notes, { width: 120, height: 42, compact: true });
       return `<tr class="${tintClass(c.deg)}">
