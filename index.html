@@ -765,7 +765,9 @@
   }
 
   function normalizeKeyQuery(raw) {
-    return decodeURIComponent(String(raw || ""))
+    let s = String(raw || "");
+    try { s = decodeURIComponent(s); } catch (e) { /* keep raw */ }
+    return s
       .trim()
       .toLowerCase()
       .replace(/\s+/g, "")
@@ -848,6 +850,8 @@
         </table>
       </div>`;
     }).join("");
+
+    if (updateUrl) setKeyInUrl(key.id);
   }
 
   sel.addEventListener("change", () => render(Number(sel.value)));
