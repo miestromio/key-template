@@ -141,7 +141,7 @@
   }
   .scale-piano svg { width: 100%; height: auto; display: block; }
 
-  /* Chords table */
+  /* Chords table — text cols tight so piano stays on-screen */
   .table-scroll {
     width: 100%;
     overflow-x: auto;
@@ -153,26 +153,26 @@
   table.chords {
     width: 100%;
     border-collapse: collapse;
-    min-width: 640px;
-    font-size: 13px;
+    table-layout: fixed;
+    font-size: 12px;
   }
   table.chords th {
     background: var(--hdr);
     color: #fff;
     font-weight: 700;
-    font-size: 11px;
-    padding: 7px 6px;
+    font-size: 10px;
+    padding: 6px 4px;
     text-align: left;
     white-space: nowrap;
   }
-  table.chords th.deg { text-align: center; width: 8%; }
-  table.chords th.chord,
-  table.chords th.notes,
-  table.chords th.variants { width: 18%; }
-  table.chords th.piano { width: 30%; text-align: center; }
+  table.chords th.deg { text-align: center; width: 9%; }
+  table.chords th.chord { width: 16%; }
+  table.chords th.notes { width: 16%; }
+  table.chords th.variants { width: 22%; }
+  table.chords th.piano { width: 37%; text-align: center; }
 
   table.chords td {
-    padding: 6px 6px;
+    padding: 5px 4px;
     border-top: 1px solid #cfd8ea;
     vertical-align: middle;
   }
@@ -180,22 +180,34 @@
     text-align: center;
     font-weight: 700;
     color: var(--accent);
-    font-size: 14px;
+    font-size: 13px;
   }
-  table.chords td.chord { font-weight: 700; }
-  table.chords td.notes { font-weight: 700; white-space: nowrap; }
-  table.chords td.variants {
+  table.chords td.chord {
+    font-weight: 700;
     font-size: 11px;
-    line-height: 1.35;
+    line-height: 1.25;
+    word-break: break-word;
+  }
+  table.chords td.notes {
+    font-weight: 700;
+    font-size: 11px;
+    line-height: 1.25;
+    white-space: normal;
+    word-break: break-word;
+  }
+  table.chords td.variants {
+    font-size: 10px;
+    line-height: 1.3;
     color: #222;
+    word-break: break-word;
   }
   table.chords td.piano {
     text-align: center;
-    padding: 4px 8px;
+    padding: 3px 4px;
   }
   table.chords td.piano svg {
     width: 100%;
-    max-width: 220px;
+    max-width: 180px;
     height: auto;
     display: inline-block;
   }
@@ -257,12 +269,24 @@
   @media (max-width: 720px) {
     .prog-grid { grid-template-columns: repeat(2, 1fr); }
     .wrap { padding: 10px 8px 32px; }
-    table.chords { font-size: 12px; min-width: 560px; }
+    table.chords { font-size: 11px; }
+    table.chords th { font-size: 9px; padding: 5px 3px; }
+    table.chords td { padding: 4px 3px; }
+    table.chords td.chord,
+    table.chords td.notes { font-size: 10px; }
+    table.chords td.variants { font-size: 9px; line-height: 1.25; }
+    table.chords td.piano svg { max-width: 140px; }
   }
   @media (max-width: 430px) {
     .prog-grid { grid-template-columns: 1fr; }
     .brand { display: none; }
     .chip { min-width: 32px; padding: 5px 8px; font-size: 13px; }
+    table.chords th.deg { width: 8%; }
+    table.chords th.chord { width: 15%; }
+    table.chords th.notes { width: 15%; }
+    table.chords th.variants { width: 20%; }
+    table.chords th.piano { width: 42%; }
+    table.chords td.piano svg { max-width: 120px; }
   }
 </style>
 </head>
